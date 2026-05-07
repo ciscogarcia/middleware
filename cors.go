@@ -1,6 +1,9 @@
 package middleware
 
-import "net/http"
+import (
+	"net/http"
+	"os"
+)
 
 func CORS(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -18,8 +21,14 @@ func CORS(next http.HandlerFunc) http.HandlerFunc {
 }
 
 func CORSReact(next http.HandlerFunc) http.HandlerFunc {
+	var ORIGIN string
+	val, exists := os.LookupEnv("APP_API")
+	if exists {
+		ORIGIN = val
+	}
+
 	return func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Add("Access-Control-Allow-Origin", "https://timecard.inproenterprises.org")
+		w.Header().Add("Access-Control-Allow-Origin", ORIGIN)
 		w.Header().Add("Access-Control-Allow-Credentials", "true")
 		w.Header().Add("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With")
 		w.Header().Add("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE, PATCH")
